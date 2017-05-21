@@ -1,0 +1,122 @@
+﻿@using AjVan.Models
+@using System.Data.Entity
+@model IEnumerable<Soba>
+<table class="table table-hover">
+    <tr>
+        <th>
+            Kreator
+        </th>
+        <th>
+            Sport
+        </th>
+        <th>
+            Naziv sobe
+        </th>
+        <th>
+            Vrijeme
+        </th>
+        <th>
+            Kvart
+        </th>
+        <th>
+            Igraci
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td onclick="location.href = '@(Url.Action("Details", "Sobas", new { id = item.Id }))'" style="cursor: pointer;">
+                @Html.DisplayFor(modelItem => item.Admin.UserName)
+            </td>
+            <td onclick="location.href = '@(Url.Action("Details", "Sobas", new { id = item.Id }))'" style="cursor: pointer;">
+                @Html.DisplayFor(modelItem => item.Sport.Naziv)
+            </td>
+            <td onclick="location.href = '@(Url.Action("Details", "Sobas", new { id = item.Id }))'" style="cursor: pointer;">
+                @Html.DisplayFor(modelItem => item.Naziv)
+            </td>
+            <td onclick="location.href = '@(Url.Action("Details", "Sobas", new { id = item.Id }))'" style="cursor: pointer;"> 
+                @Html.DisplayFor(modelItem => item.Pocetak)
+            </td>
+            <td onclick="location.href = '@(Url.Action("Details", "Sobas", new { id = item.Id }))'" style="cursor: pointer;">
+                @Html.DisplayFor(modelItem => item.Teren.Kvart.Naziv)
+            </td>
+            <td onclick="location.href = '@(Url.Action("Details", "Sobas", new { id = item.Id }))'" style="cursor: pointer;">
+                @Html.DisplayFor(modelItem => item.Igraci.Count) / @item.MaksimalniBrojIgraca
+            </td>
+            <td>
+                @{
+                    var zavrsila = item.Pocetak.Add(item.Trajanje);
+                    if (zavrsila < DateTime.Now)
+                    {
+                        <a disabled class="btn btn-xs btn-danger delete" title="Događaj je završio">Završilo</a>
+                    }
+                    else if (item.Igraci.Contains((Korisnik)Session["loggedUser"]))
+                    {
+                        <a disabled class="btn btn-xs btn-success" title="Pridruži se sobi" href="@Url.Action("JoinRoom",new { id=item.Id})">Pridruži se!</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-xs btn-success" title="Pridruži se sobi" href="@Url.Action("JoinRoom",new { id=item.Id})">Pridruži se!</a>
+                    }
+                }
+            </td>
+            <td>
+                @{
+                    if (zavrsila < DateTime.Now)
+                    {
+                        
+                    }
+                    else if (item.Igraci.Contains((Korisnik)Session["loggedUser"]))
+                    {
+                        Korisnik k = (Korisnik)Session["loggedUser"];
+                        if (item.Admin.UserName.Equals(k.UserName))
+                        {
+                            <a class="btn btn-xs btn-danger delete" title="Izađi iz sobe" data-toggle="modal" data-target="@("#delete" + item.Id)">Izađi</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-xs btn-danger delete" title="Izađi iz sobe" href="@Url.Action("ExitRoom",new { id=@item.Id})">Izađi</a>
+                        }
+                    }
+                    else
+                    {
+                        <a disabled class="btn btn-xs btn-danger delete" title="Izađi iz sobe" href="@Url.Action("ExitRoom",new { id=@item.Id})">Izađi</a>
+                    }
+                }
+            </td>
+
+        </tr>
+    }
+</table>
+
+@foreach (var item in Model)
+{
+    <div id="@("delete" + item.Id)" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h2 class="modal-title">Brisanje</h2>
+
+                </div>
+                <div class="modal-body">
+                    <h3>Vi ste organizator sobe @item.Naziv. Izlaskom iz sobe, soba će se obrisati. Jeste li sigurni da to želite napraviti?</h3>
+                </div>
+                <div class="modal-footer">
+                    @using (Html.BeginForm("Delete", "Sobas", new { id = @item.Id }, FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-actions no-color">
+                            <input type="hidden" name="Id" value="@item.Id" />
+                            <input type="submit" value="Delete" class="btn btn-default" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

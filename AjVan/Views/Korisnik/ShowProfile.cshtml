@@ -1,0 +1,47 @@
+﻿@model AjVan.Models.Korisnik
+
+@{
+    ViewBag.Title = "Profile";
+}
+
+<style>
+    h2, dt, dd {
+        color: white;
+    }
+</style>
+
+<h2>Profile</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+       
+        <dt>
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PhoneNumber)
+        </dd>
+
+       
+    </dl>
+</div>
+

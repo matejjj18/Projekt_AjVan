@@ -1,0 +1,50 @@
+﻿@model AjVan.Models.Komentar
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Komentar</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Korisnik.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Korisnik.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Soba.Naziv)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Soba.Naziv)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Sadrzaj)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Sadrzaj)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Vrijeme)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Vrijeme)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,258 @@
+﻿@model AjVan.Models.ViewModels.SobaKomentarViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<style>
+    .panel-heading{
+        padding-top: 1px;
+    }
+</style>
+
+<hr />
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="panel panel-success">
+                <div class="panel-heading" >
+
+                    <h1>
+                        @Html.DisplayFor(model => model.Naziv)
+
+                        @{
+                            var zavrsila = Model.Pocetak.Add(Model.Trajanje);
+                            if (zavrsila < DateTime.Now)
+                            {
+                                <a disabled class="btn btn-xs btn-danger delete" title="Događaj je završio">Završilo</a>
+                            }
+                            else if (@Model.Igraci.Contains((AjVan.Models.Korisnik)Session["loggedUser"]))
+                            {
+                                AjVan.Models.Korisnik k = (AjVan.Models.Korisnik)Session["loggedUser"];
+                                if (Model.Admin.UserName.Equals(k.UserName))
+                                {
+                                    <a disabled class="btn btn-xs btn-success" title="Pridruži se sobi" href="@Url.Action("JoinRoom",new { id=@Model.Id})">Pridruži se!</a>
+                                    <a class="btn btn-xs btn-danger delete" title="Izađi iz sobe" data-toggle="modal" data-target="@("#delete1" + @Model.Id)">Izađi</a>
+                                }
+                                else
+                                {
+                                    <a disabled class="btn btn-xs btn-success" title="Pridruži se sobi" href="@Url.Action("JoinRoom",new { id=@Model.Id})">Pridruži se!</a>
+                                    <a class="btn btn-xs btn-danger delete" title="Izađi iz sobe" href="@Url.Action("ExitRoom",new { id=@Model.Id})">Izađi</a>
+                                }
+                            }
+                            else
+                            {
+                                <a class="btn btn-xs btn-success" title="Pridruži se sobi" href="@Url.Action("JoinRoom",new { id=@Model.Id})">Pridruži se!</a>
+                                <a disabled class="btn btn-xs btn-danger delete" title="Izađi iz sobe" href="@Url.Action("ExitRoom",new { id=@Model.Id})">Izađi</a>
+                            }
+                            
+                        }
+
+                    </h1>
+
+                </div>
+                <div class="panel-body">
+                    <div class="container">
+                        <div class="row-fluid">
+                            <div class="col-lg-8" style="padding-right:20px; border-right: 1px solid #ccc;">
+                                <h4>
+                                    Sport: @Html.DisplayFor(model => model.Sport.Naziv)
+                                </h4>
+
+                                <hr />
+                                <h4>
+                                    Organizator:
+                                </h4>
+                                <p>
+                                    <dl class="dl-horizontal">
+                                        <dt>
+                                            Korisničko ime:
+                                        </dt>
+                                        <dd>
+                                            @Html.DisplayFor(model => model.Admin.UserName)
+                                        </dd>
+                                        <dt>
+                                            Broj telefona:
+                                        </dt>
+                                        <dd>
+                                            @Html.DisplayFor(model => model.Admin.PhoneNumber)
+                                        </dd>
+                                        <dt>
+                                            E-mail:
+                                        </dt>
+                                        <dd>
+                                            @Html.DisplayFor(model => model.Admin.Email)
+                                        </dd>
+                                    </dl>
+                                </p>
+                                <hr />
+
+                                <h4>
+                                    Mjesto i vrijeme:
+                                </h4>
+                                <p>
+                                    <dl class="dl-horizontal">
+                                        <dt>
+                                            Vrijeme:
+                                        </dt>
+                                        <dd>
+                                            <strong style="color:maroon">@Html.DisplayFor(model => model.Pocetak)</strong>
+                                        </dd>
+                                        <dt>
+                                            Trajanje:
+                                        </dt>
+                                        <dd>
+                                            @Html.DisplayFor(model => model.Trajanje)
+                                        </dd>
+                                        <dt>
+                                            Kvart:
+                                        </dt>
+                                        <dd>
+                                            @Html.DisplayFor(model => model.Teren.Kvart.Naziv)
+                                        </dd>
+                                        <dt>
+                                            Teren:
+                                        </dt>
+                                        <dd>
+                                            @Html.DisplayFor(model => model.Teren.Naziv)
+                                        </dd>
+                                    </dl>
+                                </p>
+                                <div style="text-align:right">
+                                    @Html.ActionLink("Pogledaj detalje terena", "Details", "Tereni", new { id = Model.Teren.Id }, new { @class = "btn btn-xs btn-success", @style = "padding:2px" })
+                                </div>
+
+
+                            </div>
+                            <div class="col-lg-4">
+                                <h4>
+                                    Igrači:
+                                </h4>
+                                <ul>
+                                    @{
+                                        foreach (AjVan.Models.Korisnik korisnik in Model.Igraci)
+                                        {
+                                            <li>
+                                                @Html.ActionLink(korisnik.UserName, "ShowProfile", "Korisnik", new { player = korisnik.UserName }, null)
+                                                @if (Model.Admin.UserName.Equals(User.Identity.Name) && !korisnik.UserName.Equals(User.Identity.Name))
+                                                {
+                                                    <a class="btn btn-xs btn-danger delete" title="Izbaci igrača iz sobe" href="@Url.Action("KickPlayer",new { roomId=@Model.Id, player=@korisnik.UserName })">Kick</a>
+                                                }
+                                            </li>
+                                        }
+                                    }
+                                </ul>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+                @{
+                    var disabled = "";
+                    if (!ViewBag.IsAdmin)
+                    {
+                         disabled = "disabled = 'disabled'";
+                    }
+
+
+                        <div class="panel-footer">
+                            <h4>
+                                @Html.DisplayNameFor(model => model.Opis)
+                                @if (ViewBag.IsAdmin)
+                                {
+                                    <button class="btn btn-xs btn-success" type="submit">Uredi</button>
+                                }
+                            </h4>      
+                            @using (Html.BeginForm("EditDescription", "Sobas", "POST")){
+                                <textarea @disabled name="opis"style="background-color:lavenderblush;border-style: solid;border-width: 2px;border-color:darkgrey;padding:10px; width: 100%;word-break:break-word;border-radius:10px  ">@Model.Opis</textarea>
+                                <input hidden name="roomId" value="@Model.Id"/>             
+                            }
+
+
+                           
+
+                        </div>
+                    
+                }
+
+            </div>
+            @{
+                var isAdmin = ((System.Security.Claims.ClaimsIdentity)User.Identity).FindFirst("isSystemAdmin");
+                if (isAdmin != null)
+                {
+                    var val = isAdmin.Value;
+                    if (val.Equals("True"))
+                    {
+                        <div style="text-align:right">
+                            <a class="btn btn-sm btn-danger" title="Obriši" data-toggle="modal" data-target="@("#delete" + @Model.Id)">Obriši sobu</a>
+                        </div>
+                    }
+                }
+            }
+        </div>
+        <div class="col-lg-4">
+            @Html.Partial("_KomentariPartialView")
+        </div>
+
+       
+
+    </div>
+</div>
+
+<div id="@("delete" + @Model.Id)" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title">Brisanje</h2>
+
+            </div>
+            <div class="modal-body">
+                <h3>Jeste li sigurni da želite obrisati sobu @Model.Naziv</h3>
+            </div>
+            <div class="modal-footer">
+                @using (Html.BeginForm("Delete", "Sobas", new { id = @Model.Id }, FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-actions no-color">
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <input type="submit" value="Delete" class="btn btn-default" />
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="@("delete1" + @Model.Id)" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 class="modal-title">Brisanje</h2>
+
+            </div>
+            <div class="modal-body">
+                <h3>Vi ste organizator sobe @Model.Naziv. Izlaskom iz sobe, soba će se obrisati. Jeste li sigurni da to želite napraviti?</h3>
+            </div>
+            <div class="modal-footer">
+                @using (Html.BeginForm("Delete", "Sobas", new { id = @Model.Id }, FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-actions no-color">
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <input type="submit" value="Delete" class="btn btn-default" />
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

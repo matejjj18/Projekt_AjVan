@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<style>
+    .body-content {
+        margin: auto;
+        position: relative;
+    }
+
+    #background_image {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        -webkit-filter: blur(3px);
+        -moz-filter: blur(3px);
+       
+        -ms-filter: blur(3px);
+        filter: blur(3px);
+    }
+
+    @@font-face {
+        font-family: 'MojFont'; /*a name to be used later*/
+        src: url('../../fonts/Budidaya Italic.otf'); /*URL to font*/
+    }
+
+    .navbar-brand {
+        font-family: MojFont;
+        font-size: 50px;
+    }
+</style>
+
+
+
+
+
+
+
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+
+
+<body id="a">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Aj van!", "Index", "Sobas", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <!--<li>@Html.ActionLink("Home", "Index", "Home")</li>-->
+                    <li>@Html.ActionLink("O nama", "About", "Home")</li>
+                    <!--<li>@Html.ActionLink("Contact", "Contact", "Home")</li>-->
+
+                    <!--<li>@Html.ActionLink("Sobe", "Index", "Sobas")</li>-->
+
+                    <li>@Html.ActionLink("Galerija", "Index", "Galerija")</li>
+
+                    <li>@Html.ActionLink("Tereni", "Index", "Tereni")</li>
+
+                    @{
+                        var isAdmin = ((System.Security.Claims.ClaimsIdentity)User.Identity).FindFirst("isSystemAdmin");
+                        if (isAdmin != null)
+                        {
+                            var val = isAdmin.Value;
+                            if (val.Equals("True"))
+                            {
+                                <li>@Html.ActionLink("Sportovi", "Index", "Sportovi")</li>
+                                <li>@Html.ActionLink("Kvartovi", "Index", "Kvartovi")</li>
+                            }
+                        }
+                    }
+
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+<img src="~/Content/46751357-football-wallpapers.jpg" id="background_image" />
+@*<div class="homepage-hero-module" id="background_image">
+        <div class="video-container">
+            <div class="filter"></div>
+            <video autoplay loop class="fillWidth">
+                <source src="~/Content/1-0.mp4" type="video/mp4" />Your browser does not support the video tag. I suggest you upgrade your browser.
+                <source src="~/Content/1-0.webm" type="video/webm" />Your browser does not support the video tag. I suggest you upgrade your browser.
+            </video>
+            <div class="poster hidden">
+                <img src="~/Content/1-0.jpg" alt="">
+            </div>
+        </div>
+    </div>*@
+    <div class="container body-content">
+        <div>
+            <div id="tempmessage" class="alert"></div>
+            @if (TempData[Constants.Message] != null)
+            {
+                bool error = false;
+                var obj = TempData[Constants.ErrorOccurred];
+                if (obj != null)
+                {
+                    error = (bool)obj;
+                }
+                <div class="alert @(error ? "alert-danger" : "alert-success")">@TempData[Constants.Message]</div>
+            }
+        </div>
+        @RenderBody()
+        <hr />
+        <footer>
+            <p style="color:azure">&copy; @DateTime.Now.Year - Aj Van!</p>
+        </footer>
+    </div>
+   
+
+@Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+<script>
+    //jQuery is required to run this code
+    $( document ).ready(function() {
+
+        scaleVideoContainer();
+
+        initBannerVideoSize('.video-container .poster img');
+        initBannerVideoSize('.video-container .filter');
+        initBannerVideoSize('.video-container video');
+
+        $(window).on('resize', function() {
+            scaleVideoContainer();
+            scaleBannerVideoSize('.video-container .poster img');
+            scaleBannerVideoSize('.video-container .filter');
+            scaleBannerVideoSize('.video-container video');
+        });
+
+    });
+
+    function scaleVideoContainer() {
+
+        var height = $(window).height() + 5;
+        var unitHeight = parseInt(height) + 'px';
+        $('.homepage-hero-module').css('height',unitHeight);
+
+    }
+
+    function initBannerVideoSize(element){
+
+        $(element).each(function(){
+            $(this).data('height', $(this).height());
+            $(this).data('width', $(this).width());
+        });
+
+        scaleBannerVideoSize(element);
+
+    }
+
+    function scaleBannerVideoSize(element){
+
+        var windowWidth = $(window).width(),
+            windowHeight = $(window).height() + 5,
+            videoWidth,
+            videoHeight;
+
+        // console.log(windowHeight);
+
+        $(element).each(function(){
+            var videoAspectRatio = $(this).data('height')/$(this).data('width');
+
+            $(this).width(windowWidth);
+
+            if(windowWidth < 1000){
+                videoHeight = windowHeight;
+                videoWidth = videoHeight / videoAspectRatio;
+                $(this).css({'margin-top' : 0, 'margin-left' : -(videoWidth - windowWidth) / 2 + 'px'});
+
+                $(this).width(videoWidth).height(videoHeight);
+            }
+
+            $('.homepage-hero-module .video-container video').addClass('fadeIn animated');
+
+        });
+    }
+</script>
+</body>
+</html>

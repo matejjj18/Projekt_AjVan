@@ -1,0 +1,109 @@
+﻿@model IEnumerable<AjVan.Models.Teren>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/CSS/Table/Table.css">
+
+<h2>Index</h2>
+
+<p>
+    @{
+        var isAdmin = ((System.Security.Claims.ClaimsIdentity)User.Identity).FindFirst("isSystemAdmin");
+        if (isAdmin != null)
+        {
+            var val = isAdmin.Value;
+            if (val.Equals("True"))
+            {
+                @Html.ActionLink("Dodaj novi", "Create", "Tereni", null, new { @class = "btn btn-xs btn-info" })
+            }
+        }
+    }
+</p>
+<table class="table table-hover">
+    <tr>
+        <th>
+            Kvart
+        </th>
+        <th>
+            Naziv terena
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Opis)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.VrstaTerena)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Cijena)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td onclick="location.href = '@(Url.Action("Details", "Tereni", new { id = item.Id }))'">
+            @Html.DisplayFor(modelItem => item.Kvart.Naziv)
+        </td>
+        <td onclick="location.href = '@(Url.Action("Details", "Tereni", new { id = item.Id }))'">
+            @Html.DisplayFor(modelItem => item.Naziv)
+        </td>
+        <td onclick="location.href = '@(Url.Action("Details", "Tereni", new { id = item.Id }))'">
+            @Html.DisplayFor(modelItem => item.Opis)
+        </td>
+        <td onclick="location.href = '@(Url.Action("Details", "Tereni", new { id = item.Id }))'">
+            @Html.DisplayFor(modelItem => item.VrstaTerena)
+        </td>
+        <td onclick="location.href = '@(Url.Action("Details", "Tereni", new { id = item.Id }))'">
+            @Html.DisplayFor(modelItem => item.Cijena)
+        </td>
+        <td>
+            @{
+                if (isAdmin != null)
+                {
+                    var val = isAdmin.Value;
+                    if (val.Equals("True"))
+                    {
+                        <a class="btn btn-xs btn-info" title="Uredi" href="@Url.Action("Edit",new { id=item.Id})"><span class="glyphicon glyphicon-edit"></span></a>
+                        <a class="btn btn-xs btn-danger" data-toggle="modal" data-target="@("#delete" + item.Id)"><span class="glyphicon glyphicon-remove"></span></a>
+                    }
+                }
+            }
+        </td>
+    </tr>
+}
+
+</table>
+
+
+
+@foreach (var item in Model)
+{
+    <div id="@("delete" + item.Id)" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h2 class="modal-title">Brisanje</h2>
+
+                </div>
+                <div class="modal-body">
+                    <h3>Jeste li sigurni da želite obrisati teren @item.Naziv</h3>
+                </div>
+                <div class="modal-footer">
+                    @using (Html.BeginForm("Delete", "Tereni", new { id = @item.Id }, FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-actions no-color">
+                            <input type="hidden" name="Id" value="@item.Id" />
+                            <input type="submit" value="Delete" class="btn btn-default" />
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

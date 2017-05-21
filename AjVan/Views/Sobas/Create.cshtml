@@ -1,0 +1,180 @@
+﻿@using Newtonsoft.Json
+@using AjVan.Models
+@model AjVan.Models.Soba
+
+@{
+    ViewBag.Title = "Stvaranje";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    h2, .control-label {
+        color: white;
+    }
+</style>
+
+<h2>Stvori sobu</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Naziv, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Naziv, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Naziv, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Opis, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Opis, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Opis, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.MaksimalniBrojIgraca, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.MaksimalniBrojIgraca, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.MaksimalniBrojIgraca, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Pocetak" class="col-md-2 control-label">Pocetak</label>
+            <div class="col-md-10">
+
+                <div class="input-group date datetimepicker_select col-lg-4" style="padding-left:0px">
+                    @Html.EditorFor(model => model.Pocetak, new { htmlAttributes = new { @class = "form-control ", data_date = @DateTime.Now, onkeydown = "return false;", id="date_pocetak" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Trajanje" class="col-md-2 control-label">Trajanje</label>
+            <div class="col-md-10">
+
+                <div class="input-group date timepicker_select col-lg-4" style="padding-left:0px">
+                    @Html.EditorFor(model => model.Trajanje, new { htmlAttributes = new { @class = "form-control ", onkeydown = "return false;" } })
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+                </div>
+                @Html.ValidationMessageFor(model => model.Trajanje, "", new { @class = "text-danger" })
+
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SportId, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("SportId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.SportId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Kvart", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    <select id="kvart_selector" class="form-control">
+                        <option value="0"></option>
+                        @foreach (var kvart in ViewBag.Kvartovi)
+                        {
+                            var tereni = @Html.Raw(JsonConvert.SerializeObject(kvart.Tereni));
+                            <option value="@kvart.Id" data-tereni='@tereni'>@kvart.Naziv</option>
+                        }
+                    </select>
+                }
+            </div>
+            @Html.Label("Teren", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    @Html.DropDownListFor(m => m.TerenId, new SelectList(new List<Teren>(), "Id", "Naziv"), new { @class = "form-control",id="teren_selector" })
+               }
+                @Html.ValidationMessageFor(model => model.TerenId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+                    }
+
+<div>
+    <a class="btn btn-xs btn-info" title="Nazad" href="@Url.Action("Index")">Nazad na popis</a>
+</div>
+
+@section Scripts {
+                        @Scripts.Render("~/bundles/jqueryval")
+
+
+    @Scripts.Render("~/bundles/js/moment")
+    @Styles.Render("~/bundles/css/boostrap-datetimepicker")
+    @Scripts.Render("~/bundles/js/boostrap-datetimepicker")
+
+    <script src="~/Content/js/Soba/Create.js"></script>
+}
+
+
+
+@*<head>
+        <title></title>
+        <link href="~/Content/date_time_picker/sample in bootstrap v3/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="~/Content/date_time_picker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+    </head>
+
+
+    <script type="text/javascript" src="~/Content/date_time_picker/sample in bootstrap v3/jquery/jquery-1.8.3.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="~/Content/date_time_picker/sample in bootstrap v3/bootstrap/js/bootstrap.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="~/Content/date_time_picker/js/bootstrap-datetimepicker.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="~/Content/date_time_picker/js/locales/bootstrap-datetimepicker.hr.js" charset="UTF-8"></script>
+
+
+    <script type="text/javascript">
+        $('.form_datetime').datetimepicker({
+            language:  'hr',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            forceParse: 0,
+            showMeridian: 1
+        });
+        $('.form_date').datetimepicker({
+            language:  'hr',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 0
+        });
+        $('.form_time').datetimepicker({
+            language:  'hr',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 1,
+            minView: 0,
+            maxView: 1,
+            forceParse: 0
+        });
+    </script>*@

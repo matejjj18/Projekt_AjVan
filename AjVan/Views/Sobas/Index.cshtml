@@ -1,0 +1,183 @@
+﻿@using AjVan.ViewModels.Sobe
+@using Newtonsoft.Json
+@model IndexSobeViewModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/CSS/Soba/Soba.css">
+<br />
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="row">
+                <div class="filtergumb">Vrijeme</div>
+                <div class="filter">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label for="Pocetak" class="col-md-2 control-label">Od</label>
+                            <div class='input-group date datetimepicker_filter' id='datetimepicker_from'>
+                                <input type='text' class="form-control time-input" placeholder="Bilo kada" id="input_from" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-remove clear-time"></span>
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label for="Kraj" class="col-md-2 control-label">Do</label>
+                            <div class='input-group date datetimepicker_filter' id='datetimepicker_to'>
+                                <input type='text' class="form-control time-input" placeholder="Bilo kada" id="input_to" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-remove clear-time"></span>
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                    @*<div class="form-group">
+                        <div class="col-md-12 text-right">
+                            <input id="filterbutton" type="button" class="btn-success" value="Filtriraj" />
+
+                        </div>
+                    </div>*@
+                </div>
+            </div>
+            <div class="row">
+                <div class="filtergumb">Sportovi</div>
+                <div class="filter">
+                    <form>
+                        <div class="form-group">
+                            <div class="col-md-12 text-center">
+                                <div class="form-group">
+                                    @{
+
+                                        List<SelectListItem> sportItems = new SelectList(Model.Sportovi, "Id", "Naziv").ToList();
+                                        sportItems.Insert(0, (new SelectListItem { Text = "Svi sportovi", Value = "0", Selected = true }));
+                                        @Html.DropDownList("Sportovi", sportItems, new { @class = "form-control" })
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="filtergumb">Kvartovi i tereni</div>
+                <div class="filter">
+                    <form>
+                        <div class="form-group">
+                            <div class="col-md-12 text-center">
+                                @{
+                                    <select id="kvart_selector" class="form-control">
+                                        <option value="0">Svi kvartovi</option>
+                                        @foreach (var kvart in Model.Kvartovi)
+                                        {
+                                            var tereni = @Html.Raw(JsonConvert.SerializeObject(kvart.Tereni));
+                                            <option value="@kvart.Id" data-tereni='@tereni'>@kvart.Naziv</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+
+                            <div class="col-md-12 text-center">
+                                @{
+                                    <select id="teren_selector" class="form-control">
+                                        <option value="0">Svi tereni</option>
+                                    </select>
+                                }
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="panel-group">
+                <div class="panel panel-success">
+                    <div class="panel-heading" align="center">Otvorene sobe</div>
+                    <div class="panel-body" id="soba_table_container">
+                        @Html.Partial("_SobaTablePartial", Model.Sobe)
+                    </div>
+                </div>
+            </div>
+            <br />
+            <p align="right">
+                @{
+                    if ((bool)Session["logged"])
+                    {
+                        <input type="button" class="btn btn-lg btn-success" value="Kreiraj novu sobu" onclick="location.href='@Url.Action("Create", "Sobas")'" />
+                    }
+                }
+
+            </p>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!--
+//foreach (var item in Model)
+{
+    <div id="//("details" + item.Id)" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h2 class="modal-title">Detalji</h2>
+                    <h3>Detalji sobe //item.Naziv</h3>
+                </div>
+
+                <div class="modal-body">
+                    //Html.Partial("Details", item)
+                </div>
+
+                <div class="modal-footer">
+
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Zatvori</button>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+    -->
+<head>
+    <title></title>
+    @*<link href="~/Content/date_time_picker/sample in bootstrap v3/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">*@
+
+    @*<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>*@
+    <link href="~/Content/date_time_picker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
+
+</head>
+
+
+
+
+@section scripts{
+    @Scripts.Render("~/bundles/js/moment")
+    @Styles.Render("~/bundles/css/boostrap-datetimepicker")
+    @Scripts.Render("~/bundles/js/boostrap-datetimepicker")
+
+
+    <script src="~/Content/js/Soba/Index.js"></script>
+}

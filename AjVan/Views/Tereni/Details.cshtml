@@ -1,0 +1,102 @@
+﻿@model AjVan.Models.Teren
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<hr />
+<div class="row">
+    <div class="col-sm-5">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+               <h3>Detalji terena</h3>
+            </div>
+            <div class="panel-body">
+
+                <h4>
+                    Naziv terena:
+                </h4>
+                <h5>
+                    @Model.Naziv
+                </h5>
+                <hr />
+
+                <h4>
+                    Kvart:
+                </h4>
+                <h5>
+                    @Model.Kvart.Naziv
+                </h5>
+                <hr />
+                <h4>
+                    Opis terena:
+                </h4>
+                <h5>
+                    @Model.Opis
+                </h5>
+                <hr />
+                <h4>
+                    Vrsta terena:
+                </h4>
+                <h5>
+                    @Model.VrstaTerena
+                </h5>
+                <hr />
+                <h4>
+                    Cijena
+                </h4>
+                <h5>
+                    @Model.Cijena
+                </h5>
+                
+            </div>
+            
+           
+           
+   
+        </div>
+        <p align="right">
+            @{
+                var isAdmin = ((System.Security.Claims.ClaimsIdentity)User.Identity).FindFirst("isSystemAdmin");
+                if (isAdmin != null)
+                {
+                    var val = isAdmin.Value;
+                    if (val.Equals("True"))
+                    {
+                        <a class="btn btn-md btn-default" title="Uredi" href="@Url.Action("Edit",new { id=@Model.Id})">Edit</a>
+                    }
+                }
+            }
+            <button class="btn btn-md btn-default" href="#" onclick="history.back();">Povratak</button>
+        </p>
+    </div>
+    <div class="col-lg-5">
+        <div class="col-sm-7">
+            <style>
+                /* Always set the map height explicitly to define the size of the div
+                    * element that contains the map. */
+                #map {
+                    height: 500px;
+                    width: 500px;
+                }
+            </style>
+            <div id="map"></div>
+            
+        </div>
+           
+    </div>
+</div>
+
+<input id="geo-sirina" type="hidden" value="@Model.GeoSirina" readonly="readonly" style="border: none; outline: none;" />
+<input id="geo-duzina" type="hidden" value="@Model.GeoDuzina" readonly="readonly" style="border: none; outline: none;" />
+
+
+
+
+
+@section Scripts {
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAArYTO4igYmQhOhG_FM5v8ajZuJzeA1Sk">
+    </script>
+    <script src="~/Content/js/Maps/GoogleMaps.js"></script>
+    <script src="~/Content/js/Teren/Details.js"></script>
+}

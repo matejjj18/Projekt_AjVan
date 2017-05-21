@@ -1,0 +1,14 @@
+﻿h2 {
+    color: white;
+}
+
+.table {
+    color: white;
+    background: rgba(62, 62, 60, 0.85);
+    border-radius: 5px;
+    padding: 3px;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+    background-color: #808080;
+}

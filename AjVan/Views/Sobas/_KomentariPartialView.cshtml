@@ -1,0 +1,58 @@
+﻿@model AjVan.Models.ViewModels.SobaKomentarViewModel
+
+<section class="containter-fluid" id="komentari">
+    <div class="panel panel-success">
+        <div class="panel-heading"><h3>Komentari
+             </h3></div>
+        
+            <div class="panel-body"  style="overflow-y:scroll; height:400px">
+                @{
+                    foreach (AjVan.Models.Komentar komentar in Model.Komentari)
+                    {
+                         @komentar.Korisnik.UserName @Html.Raw(" (") @komentar.Vrijeme @Html.Raw(")")
+                        <p id="komentar">
+                            @komentar.Sadrzaj
+                        </p>
+                        
+                    }
+                }
+                
+            </div>
+            
+            <div class="panel-footer">
+                @{
+                    if ((bool)Session["logged"])
+                    {
+                        using (Html.BeginForm("Create", "Komentari", new { id = Model.Id }, FormMethod.Post))
+                        {
+
+                            <div class="form-group containter">
+
+                                <div class="containter">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            @Html.TextAreaFor(model => model.NoviKomentar.Sadrzaj, new { @class = "form-control", @style = "max-width:100%" })
+                                        </div>        
+                                        <div class="col-md-4">
+                                                <button type="submit" value="+" class="btn btn-lg btn-success form-group"><span class="glyphicon glyphicon-share"></span></button>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+                    }
+                    else
+                    {
+                        @Html.Raw("Prijavite se kako bi mogli komentirati!");
+            }
+                }
+            </div>
+        </div>
+   
+
+</section>
+
+<link rel="stylesheet" type="text/css" href="~/Content/CSS/Komentari/Komentar.css">

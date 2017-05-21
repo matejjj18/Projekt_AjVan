@@ -1,0 +1,30 @@
+﻿@model AjVan.Models.Kvart
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<style>
+    h2, dt, dd{
+        color: white;
+    }
+</style>
+
+<h2>Kvart</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Naziv):
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Naziv)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    <a class="btn btn-xs btn-info" title="Uredi" href="@Url.Action("Edit",new { id=@Model.Id})">Uredi</a>
+    <a class="btn btn-xs btn-info" title="Nazad" href="@Url.Action("Index")">Nazad na popis</a>
+</p>
